@@ -737,10 +737,6 @@ void Hnsw::SearchByVector(const vector<float>& qvec, size_t k, size_t ef_search,
     float PORTABLE_ALIGN32 TmpRes[8];
     const float* qraw = nullptr;
 
-    if (ef_search < 0) {
-        ef_search = 50 * k;
-    }
-
     vector<float> qvec_copy(qvec);
     if(metric_ == DistanceKind::ANGULAR) {
         NormalizeVector(qvec_copy);
@@ -794,9 +790,6 @@ void Hnsw::SearchByVector(const vector<float>& qvec, size_t k, size_t ef_search,
 }
 
 void Hnsw::SearchById(int id, size_t k, size_t ef_search, vector<pair<int, float> >& result) {
-    if (ef_search < 0) {
-        ef_search = 50 * k;
-    }
     SearchById_(id, 0.0, (const float*)(model_level0_ + id * memory_per_node_level0_ + memory_per_link_level0_), k, ef_search, result);
 }
 
