@@ -5,7 +5,7 @@ Updated documentation and details to come soon.
 
 Currently the following details are different from upstream:
 
-- Support for Intel Compiler.
+- Support for Intel Compiler. (on macOS, XCode 9 + icpc is not supported. This is due to a bug in icpc.)
 - Support for Apple LLVM.
 - Weakened hard dependency against OpenMP. (via OPENMP=0 in Makefile)
 - Removed spdlog dependency.
