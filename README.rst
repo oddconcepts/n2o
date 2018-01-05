@@ -1,3 +1,20 @@
+N₂O
+===
+
+Updated documentation and details to come soon.
+
+Currently the following details are different from upstream:
+
+- Support for Intel Compiler.
+- Support for Apple LLVM.
+- Weakened hard dependency against OpenMP. (via OPENMP=0 in Makefile)
+- Removed spdlog dependency.
+- Removed unused, seemingly dead test/benchmark code.
+
+Github level reference to original repository has been removed to
+prevent Github from displaying/suggesting pull requests which will
+most likely not be mergeable to upstream.
+
 N2
 == 
 
@@ -127,7 +144,7 @@ limitations under the License.
 .. _Python: docs/Python_API.rst
 .. _C++: docs/Cpp_API.rst
 .. _Go: docs/Go_API.rst
-.. _Apache 2 license: LICENSE.txt
+.. _Apache 2 license: LICENSE
 
 .. |image0| image:: docs/imgs/build_time/build_time.png
 .. |image1| image:: docs/imgs/search_time/search_speed.png
