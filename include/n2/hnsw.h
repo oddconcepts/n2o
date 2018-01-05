@@ -21,8 +21,6 @@
 #include <random>
 #include <vector>
 
-#include "spdlog/spdlog.h"
-
 #include "base.h"
 #include "mmap.h"
 #include "distance.h"
@@ -119,7 +117,6 @@ private:
     }
 
 private:
-    std::shared_ptr<spdlog::logger> logger_;
     std::unique_ptr<VisitedList> search_list_;
 
     const std::string n2_signature = "TOROS_N2@N9R4";

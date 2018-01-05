@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <algorithm>
-#include <chrono>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -57,19 +56,11 @@ using std::vector;
 thread_local VisitedList* visited_list_ = nullptr;
 
 Hnsw::Hnsw() {
-    logger_ = spdlog::get("n2");
-    if (logger_ == nullptr) {
-        logger_ = spdlog::stdout_logger_mt("n2");
-    }
     metric_ = DistanceKind::ANGULAR;
     dist_cls_ = new AngularDistance();
 }
 
 Hnsw::Hnsw(int dim, string metric) : data_dim_(dim) {
-    logger_ = spdlog::get("n2");
-    if (logger_ == nullptr) {
-        logger_ = spdlog::stdout_logger_mt("n2");
-    }
     if (metric == "L2" || metric =="euclidean") {
         metric_ = DistanceKind::L2;
         dist_cls_ = new L2Distance();
@@ -82,10 +73,6 @@ Hnsw::Hnsw(int dim, string metric) : data_dim_(dim) {
 }
 
 Hnsw::Hnsw(const Hnsw& other) {
-    logger_= spdlog::get("n2");
-    if (logger_ == nullptr) {
-        logger_ = spdlog::stdout_logger_mt("n2");
-    }
     model_byte_size_ = other.model_byte_size_;
     model_ = new char[model_byte_size_];
     std::copy(other.model_, other.model_ + model_byte_size_, model_);
@@ -99,10 +86,6 @@ Hnsw::Hnsw(const Hnsw& other) {
 }
 
 Hnsw::Hnsw(Hnsw& other) {
-    logger_= spdlog::get("n2");
-    if (logger_ == nullptr) {
-        logger_ = spdlog::stdout_logger_mt("n2");
-    }
     model_byte_size_ = other.model_byte_size_;
     model_ = new char[model_byte_size_];
     std::copy(other.model_, other.model_ + model_byte_size_, model_);
@@ -116,10 +99,6 @@ Hnsw::Hnsw(Hnsw& other) {
 }
 
 Hnsw::Hnsw(Hnsw&& other) noexcept {
-    logger_= spdlog::get("n2");
-    if (logger_ == nullptr) {
-        logger_ = spdlog::stdout_logger_mt("n2");
-    }
     model_byte_size_ = other.model_byte_size_;
     model_ = other.model_;
     other.model_ = nullptr;
@@ -135,11 +114,6 @@ Hnsw::Hnsw(Hnsw&& other) noexcept {
 }
 
 Hnsw& Hnsw::operator=(const Hnsw& other) {
-    logger_= spdlog::get("n2");
-    if (logger_ == nullptr) {
-        logger_ = spdlog::stdout_logger_mt("n2");
-    }
-
     if(model_) {
         delete [] model_;
         model_ = nullptr;
@@ -164,10 +138,6 @@ Hnsw& Hnsw::operator=(const Hnsw& other) {
 }
 
 Hnsw& Hnsw::operator=(Hnsw&& other) noexcept {
-    logger_= spdlog::get("n2");
-    if (logger_ == nullptr) {
-        logger_ = spdlog::stdout_logger_mt("n2");
-    }
     if(model_mmap_) {
         delete model_mmap_;
         model_mmap_ = nullptr;
@@ -532,7 +502,7 @@ void Hnsw::Insert(HnswNode* qnode) {
     const float* qraw = &qvec[0];
     float PORTABLE_ALIGN32 TmpRes[8];
     if (cur_level < maxlevel_copy) {
-        _mm_prefetch(&dist_cls_, _MM_HINT_T0);
+        _mm_prefetch((char*)&dist_cls_, _MM_HINT_T0);
         HnswNode* cur_node = enterpoint;
         float d = dist_cls_->Evaluate(qraw, (float*)&cur_node->GetData()[0], data_dim_, TmpRes);
         float cur_dist = d;
@@ -558,7 +528,7 @@ void Hnsw::Insert(HnswNode* qnode) {
         }
         enterpoint = cur_node;
     }
-    _mm_prefetch(&selecting_policy_cls_, _MM_HINT_T0);
+    _mm_prefetch((char*)&selecting_policy_cls_, _MM_HINT_T0);
     for (int i = std::min(maxlevel_copy, cur_level); i >= 0; --i) {
         priority_queue<FurtherFirst> temp_res;
         SearchAtLayer(qvec, enterpoint, i, efConstruction_, temp_res);
@@ -691,7 +661,7 @@ void Hnsw::SearchById_(int cur_node_id, float cur_dist, const float* qraw, size_
         int size = *data;
         for (int j = 1; j <= size; ++j) {
             tnum = *(data + j);
-            _mm_prefetch(dist_cls_, _MM_HINT_T0);
+            _mm_prefetch((char*)dist_cls_, _MM_HINT_T0);
             if (visited[tnum] != mark) {
                 visited[tnum] = mark;
                 d = dist_cls_->Evaluate(qraw, (float*)(model_level0_ + tnum*memory_per_node_level0_ + memory_per_link_level0_), data_dim_, TmpRes);
@@ -718,7 +688,7 @@ void Hnsw::SearchById_(int cur_node_id, float cur_dist, const float* qraw, size_
         res_t.emplace_back(visited_nodes.top());
         visited_nodes.pop();
     }
-    _mm_prefetch(&res_t[0], _MM_HINT_T0);
+    _mm_prefetch((char*)&res_t[0], _MM_HINT_T0);
     std::sort(res_t.begin(), res_t.end());
     size_t sz;
     if (ensure_k_) {
@@ -729,7 +699,7 @@ void Hnsw::SearchById_(int cur_node_id, float cur_dist, const float* qraw, size_
     for(size_t i = 0; i < sz; ++i)
         result.push_back(pair<int, float>(res_t[i].second, res_t[i].first));
     if (ensure_k_ && need_sort) {
-        _mm_prefetch(&result[0], _MM_HINT_T0);
+        _mm_prefetch((char*)&result[0], _MM_HINT_T0);
         sort(result.begin(), result.end(), [](const pair<int, float>& i, const pair<int, float>& j) -> bool {
                 return i.second < j.second; });
     }
@@ -777,7 +747,7 @@ void Hnsw::SearchByVector(const vector<float>& qvec, size_t k, size_t ef_search,
     }
 
     qraw = &qvec_copy[0];
-    _mm_prefetch(&dist_cls_, _MM_HINT_T0);
+    _mm_prefetch((char*)&dist_cls_, _MM_HINT_T0);
     int maxlevel = maxlevel_;
     int cur_node_id = enterpoint_id_;
     float cur_dist = dist_cls_->Evaluate(qraw, (float *)(model_level0_ + cur_node_id*memory_per_node_level0_ + memory_per_link_level0_), data_dim_, TmpRes);
@@ -832,7 +802,7 @@ void Hnsw::SearchById(int id, size_t k, size_t ef_search, vector<pair<int, float
 
 void Hnsw::SearchAtLayer(const std::vector<float>& qvec, HnswNode* enterpoint, int level, size_t ef, priority_queue<FurtherFirst>& result) {
     // TODO: check Node 12bytes => 8bytes
-    _mm_prefetch(&dist_cls_, _MM_HINT_T0);
+    _mm_prefetch((char*)&dist_cls_, _MM_HINT_T0);
     float PORTABLE_ALIGN32 TmpRes[8];
     const float* qraw = &qvec[0];
     priority_queue<CloserFirst> candidates;
@@ -912,17 +882,16 @@ void Hnsw::SaveModelConfig(char* ptr) {
 }
 
 void Hnsw::PrintConfigs() const {
-    logger_->info("HNSW configurations & status: M({}), MaxM({}), MaxM0({}), efCon({}), levelmult({}), maxlevel({}), #nodes({}), dimension of data({}), memory per data({}), memory per link level0({}), memory per node level0({}), memory per node higher level({}), higher level offset({}), level0 offset({})", M_, MaxM_, MaxM0_, efConstruction_, levelmult_, maxlevel_, num_nodes_, data_dim_, memory_per_data_, memory_per_link_level0_, memory_per_node_level0_, memory_per_node_higher_level_, higher_level_offset_, level0_offset_);
+    std::cout << string_format("HNSW configurations & status: M(%d), MaxM(%d), MaxM0(%d), efCon(%d), levelmult(%d), maxlevel(%d), #nodes(%d), dimension of data(%d), memory per data(%lld), memory per link level0(%lld), memory per node level0(%lld), memory per node higher level(%lld), higher level offset(%lld), level0 offset(%lld)", M_, MaxM_, MaxM0_, efConstruction_, levelmult_, maxlevel_, num_nodes_, data_dim_, memory_per_data_, memory_per_link_level0_, memory_per_node_level0_, memory_per_node_higher_level_, higher_level_offset_, level0_offset_) << std::endl;
 }
 
 void Hnsw::PrintDegreeDist() const {
-    logger_->info("* Degree distribution");
     vector<int> degrees(MaxM0_ + 2, 0);
     for (size_t i = 0; i < nodes_.size(); ++i) {
         degrees[nodes_[i]->GetFriends(0).size()]++;
     }
     for (size_t i = 0; i < degrees.size(); ++i) {
-        logger_->info("degree: {}, count: {}", i, degrees[i]);
+        std::cout << string_format("degree: %d, count: %d", i, degrees[i]) << std::endl;
     }
 }
 

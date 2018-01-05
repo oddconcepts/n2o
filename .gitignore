@@ -8,3 +8,4 @@ build/
 dist/
 .eggs/
 n2.egg-info/
+tests/cpp_test/n2_test

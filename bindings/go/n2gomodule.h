@@ -14,7 +14,7 @@
 
 #include "n2/hnsw.h"
 
-// IMPORTANT: Please write #cgo CXXFLAGS: -std=c++11 -lgomp -I./third_party/spdlog/include 
+// IMPORTANT: Please write #cgo CXXFLAGS: -std=c++11 -lgomp
 // on the hnswindex.go after generating swig files.
 
 namespace n2 {

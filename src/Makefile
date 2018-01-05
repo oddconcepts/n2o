@@ -1,6 +1,18 @@
 CXX ?= g++
-CXXFLAGS += -O3 -march=native -std=c++11 -pthread -fPIC -fopenmp
-CXXFLAGS += -I../third_party/spdlog/include/ -I../include/
+CXXFLAGS += -O3 -march=native -std=c++11 -pthread -fPIC -I../include/
+OPENMP := 0
+
+ifeq ($(shell $(CXX) --version | grep "Apple LLVM"),)
+	OPENMP := 1
+endif
+
+ifeq ($(OPENMP), 1)
+	CXXFLAGS += -fopenmp
+	LDFLAGS += -fopenmp
+else
+	CXXFLAGS += -DSINGLE_THREADED
+endif
+
 LDFLAGS += -lpthread
 
 all: shared_lib

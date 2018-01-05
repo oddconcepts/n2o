@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <algorithm>
-#include <chrono>
 #include <cmath>
 #include <ctime>
 #include <fstream>
@@ -33,11 +32,6 @@ using std::vector;
 
 Data::Data(const vector<float>& vec)
     :data_(vec) {
-}
-
-float GetTimeDiff(const std::chrono::steady_clock::time_point& begin_t,
-                  const std::chrono::steady_clock::time_point& end_t) {
-    return ((float)std::chrono::duration_cast<std::chrono::microseconds>(end_t - begin_t).count()) / 1000.0 / 1000.0;
 }
 
 string GetCurrentDateTime() {

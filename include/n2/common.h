@@ -14,6 +14,9 @@
 
 #pragma once
 
+#include <iostream>
+#include <memory>
+
 namespace n2 {
 
 enum class GraphPostProcessing {
@@ -32,5 +35,15 @@ enum class DistanceKind {
     ANGULAR = 0,
     L2 = 1
 };
+
+// Source: https://ideone.com/av9b8p
+
+template<typename ... Args>
+std::string string_format(const std::string& format, Args ... args){
+    size_t size = 1 + snprintf(nullptr, 0, format.c_str(), args ...);
+    std::unique_ptr<char[]> buf(new char[size]);
+    snprintf(buf.get(), size, format.c_str(), args ...);
+    return std::string(buf.get(), buf.get() + size);
+}
 
 } // namespace n2

@@ -1,7 +1,20 @@
-CXX = g++
-CXXFLAGS = -std=c++11 -fopenmp  -I../src -O3 -mavx -Wall
+CXX ?= g++
+CXXFLAGS += -O3 -march=native -std=c++11 -pthread -fPIC -I../src -mavx -Wall
+OPENMP := 0
+
+ifeq ($(shell $(CXX) --version | grep "Apple LLVM"),)
+	OPENMP := 1
+endif
+
+ifeq ($(OPENMP), 1)
+	CXXFLAGS += -fopenmp
+	LDFLAGS += -fopenmp
+else
+	CXXFLAGS += -DSINGLE_THREADED
+endif
+
 #CXXFLAGS = -std=c++11 -fopenmp -I /usr/local/include/eigen3 -I./src -O3 -Wall
-CXXFLAGS += -I /usr/local/include/eigen3 -I../third_party/json11/ -I../third_party/spdlog/include -I../third_party/catch/include
+CXXFLAGS += -I /usr/local/include/eigen3 -I../third_party/json11/ -I../third_party/catch/include
 
 HNSW_OBJ = base.o distance.o heuristic.o hnsw.o
 

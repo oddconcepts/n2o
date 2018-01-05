@@ -14,7 +14,6 @@
 
 #pragma once
 
-#include <chrono>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -30,9 +29,6 @@ public:
 private:
     std::vector<float> data_;
 };
-
-float GetTimeDiff(const std::chrono::steady_clock::time_point& begin_t,
-                  const std::chrono::steady_clock::time_point& end_t);
 
 std::string GetCurrentDateTime();
 

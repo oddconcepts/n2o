@@ -13,7 +13,7 @@
 package n2
 
 /*
-#cgo CXXFLAGS: -std=c++11 -lgomp -I./third_party/spdlog/include
+#cgo CXXFLAGS: -std=c++11 -lgomp
 #define intgo swig_intgo
 typedef void *swig_voidp;
 
