@@ -14,10 +14,8 @@
 #include <fcntl.h>
 #include <iostream>
 #include <unistd.h>
-#include <string>
 #include <sys/mman.h>
 #include <sys/stat.h>
-#include <stdexcept>
 
 #include "n2/mmap.h"
 

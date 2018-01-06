@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <cmath>
-#include <cstddef>
 #include <functional>
 #include <xmmintrin.h>
 

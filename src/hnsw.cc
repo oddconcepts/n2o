@@ -20,9 +20,9 @@
 #include <queue>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <unordered_set>
 #include <vector>
-#include <thread>
 #include <xmmintrin.h>
 
 #include "n2/hnsw.h"
@@ -257,7 +257,6 @@ int Hnsw::DrawLevel(bool use_default_rng) {
 }
 
 void Hnsw::Build(int M, int MaxM0, int ef_construction, int n_threads, float mult, NeighborSelectingPolicy neighbor_selecting, GraphPostProcessing graph_merging, bool ensure_k) {
-    bool is_levelmult_set = false;
     if ( M > 0 ) MaxM_ = M_ = M;
     if ( MaxM0 > 0 ) MaxM0_ = MaxM0;
     if ( ef_construction > 0 ) efConstruction_ = ef_construction;
@@ -450,7 +449,7 @@ bool Hnsw::LoadModel(const string& fname, const bool use_mmap) {
             dist_cls_ = new L2Distance();
             break;
         default:
-            throw std::runtime_error("[Error] Unknown distance metric. ");
+            throw std::runtime_error(string_format("[Error] Unknown distance metric: %d", metric_));
     }
     return true;
 }
@@ -875,7 +874,7 @@ void Hnsw::SaveModelConfig(char* ptr) {
 }
 
 void Hnsw::PrintConfigs() const {
-    std::cout << string_format("HNSW configurations & status: M(%d), MaxM(%d), MaxM0(%d), efCon(%d), levelmult(%d), maxlevel(%d), #nodes(%d), dimension of data(%d), memory per data(%lld), memory per link level0(%lld), memory per node level0(%lld), memory per node higher level(%lld), higher level offset(%lld), level0 offset(%lld)", M_, MaxM_, MaxM0_, efConstruction_, levelmult_, maxlevel_, num_nodes_, data_dim_, memory_per_data_, memory_per_link_level0_, memory_per_node_level0_, memory_per_node_higher_level_, higher_level_offset_, level0_offset_) << std::endl;
+    std::cout << string_format("HNSW configurations & status: M(%d), MaxM(%d), MaxM0(%d), efCon(%d), levelmult(%f), maxlevel(%d), #nodes(%d), dimension of data(%d), memory per data(%lld), memory per link level0(%lld), memory per node level0(%lld), memory per node higher level(%lld), higher level offset(%lld), level0 offset(%lld)", M_, MaxM_, MaxM0_, efConstruction_, levelmult_, maxlevel_, num_nodes_, data_dim_, memory_per_data_, memory_per_link_level0_, memory_per_node_level0_, memory_per_node_higher_level_, higher_level_offset_, level0_offset_) << std::endl;
 }
 
 void Hnsw::PrintDegreeDist() const {
