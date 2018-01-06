@@ -124,7 +124,7 @@ private:
     size_t MaxM_ = 12;
     size_t MaxM0_ = 24;
     size_t efConstruction_ = 150;
-    float levelmult_ = 1 / log(1.0*M_);
+    float levelmult_ = 1 / log(1.0 * M_);
     int num_threads_ = 1;
     bool ensure_k_ = false;
     bool is_naive_ = false;

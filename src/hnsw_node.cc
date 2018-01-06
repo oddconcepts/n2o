@@ -52,7 +52,7 @@ void HnswNode::CopyLinksToOptIndex(char* mem_offset, int level) const {
     *((int*)(mem_data)) = (int)(neighbors.size());
     mem_data += sizeof(int);
     for (size_t i = 0; i < neighbors.size(); ++i) {
-        *((int*)(mem_data)) = (int)neighbors[i]->GetId();
+        *((int*)(mem_data)) = neighbors[i]->GetId();
         mem_data += sizeof(int);
     }
 }
