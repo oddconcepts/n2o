@@ -49,7 +49,7 @@ void HeuristicNeighborSelectingPolicies::Select(const size_t m, std::priority_qu
             if (j < picked.size() - 1) {
                 _mm_prefetch((char*)&(picked[j+1].GetNode()->GetData()), _MM_HINT_T0);
             }
-            _mm_prefetch(&dist_cls, _MM_HINT_T1);
+            _mm_prefetch((char*)&dist_cls, _MM_HINT_T1);
             if (dist_cls->Evaluate((float*)&neighbors[i].GetNode()->GetData()[0], (float*)&picked[j].GetNode()->GetData()[0], dim, TmpRes) < cur_dist) {
                 skip = true;
                 break;
