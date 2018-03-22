@@ -6,7 +6,7 @@ MICRO := 4
 VERSION := $(MAJOR).$(MINOR).$(MICRO)
 PREFIX ?= /usr/local/
 PREFIX_INCLUDE := $(PREFIX)/include
-PREFIX := $(PREFIX)/lib64
+PREFIX_LIB := $(PREFIX)/lib
 CXX ?= g++
 
 all: static_lib shared_lib test_cpp
@@ -39,9 +39,8 @@ static_lib:
 install:
 	if [ -f build/lib/libn2.so.$(VERSION) ] ; \
 	then \
-		install build/lib/libn2.so.$(VERSION) $(PREFIX) && \
-		ln -s `which $(PREFIX)/libn2.so.$(VERSION)` $(PREFIX)/libn2.so.tmp && \
-		mv $(PREFIX)/libn2.so.tmp $(PREFIX)/libn2.so ; \
+		install build/lib/libn2.so.$(VERSION) $(PREFIX_LIB) && \
+		ln -s $(PREFIX_LIB)/libn2.so.$(VERSION) $(PREFIX_LIB)/libn2.so && \
 		cp -r include/n2 $(PREFIX_INCLUDE) ; \
 	fi;
 	echo "Finished"
