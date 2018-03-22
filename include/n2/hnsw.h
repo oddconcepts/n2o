@@ -20,6 +20,7 @@
 #include <queue>
 #include <random>
 #include <vector>
+#include <cstring>
 
 #include "base.h"
 #include "mmap.h"
