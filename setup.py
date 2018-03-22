@@ -39,6 +39,9 @@ def define_extensions(**kwargs):
     if platform.system() != 'Darwin': 
         extra_link_args.append('-fopenmp')
         extra_compile_args.append('-fopenmp')
+    elif 'CXX' in os.environ.keys() and os.environ['CXX'].split('/')[-1] == 'icpc':
+        extra_link_args.append('-fopenmp')
+        extra_compile_args.append('-fopenmp')
 
     sources = ['./src/base.cc', './src/distance.cc', './src/heuristic.cc',
         './src/hnsw.cc', './src/hnsw_node.cc',  './src/mmap.cc',
