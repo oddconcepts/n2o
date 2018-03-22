@@ -35,8 +35,10 @@ def define_extensions(**kwargs):
     libraries = []
     extra_link_args = []
     extra_compile_args = ['-std=c++11', '-O3', '-fPIC', '-march=native']
-    extra_link_args.append('-fopenmp')
-    extra_compile_args.append('-fopenmp')
+
+    if platform.system() != 'Darwin': 
+        extra_link_args.append('-fopenmp')
+        extra_compile_args.append('-fopenmp')
 
     sources = ['./src/base.cc', './src/distance.cc', './src/heuristic.cc',
         './src/hnsw.cc', './src/hnsw_node.cc',  './src/mmap.cc',

@@ -37,7 +37,7 @@ static_lib:
 ### Installation ###
 
 install:
-	if [ -a build/lib/libn2.so.$(VERSION) ] ; \
+	if [ -f build/lib/libn2.so.$(VERSION) ] ; \
 	then \
 		install build/lib/libn2.so.$(VERSION) $(PREFIX) && \
 		ln -s `which $(PREFIX)/libn2.so.$(VERSION)` $(PREFIX)/libn2.so.tmp && \
