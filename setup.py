@@ -21,7 +21,6 @@ import subprocess
 
 from setuptools import setup, Extension
 
-from Cython.Build import cythonize
 
 NAME = 'n2'
 VERSION = '0.1.4'
@@ -32,6 +31,7 @@ def long_description():
     return readme
 
 def define_extensions(**kwargs):
+    from Cython.Build import cythonize
     libraries = []
     extra_link_args = []
     extra_compile_args = ['-std=c++11', '-O3', '-fPIC', '-march=native']
