@@ -2,7 +2,7 @@ CXX ?= g++
 CXXFLAGS += -O3 -march=native -std=c++11 -pthread -fPIC -I../src -mavx -Wall
 OPENMP := 0
 
-ifeq ($(shell $(CXX) --version | grep "Apple LLVM"),)
+ifeq ($(shell $(CXX) --version | grep "Apple"),)
 	OPENMP := 1
 endif
 
