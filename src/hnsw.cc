@@ -29,6 +29,9 @@
 #include "n2/hnsw_node.h"
 #include "n2/distance.h"
 #include "n2/min_heap.h"
+#ifdef _OPENMP
+#include <omp.h>
+#endif /* _OPENMP */
 
 #define MERGE_BUFFER_ALGO_SWITCH_THRESHOLD 100
 
@@ -788,8 +791,36 @@ void Hnsw::SearchByVector(const vector<float>& qvec, size_t k, size_t ef_search,
     }
 }
 
+void Hnsw::SearchByVectors(const vector<vector<float>>& qvecs, size_t k, size_t ef_search,
+        vector<vector<pair<int, float>>>& results, int num_threads) {
+    int job_size = qvecs.size();
+#ifdef OPENMP
+    omp_set_num_threads(num_threads);
+#endif
+    results.resize(job_size);
+
+    #pragma omp parallel for schedule(dynamic, 4)
+    for (int i=0; i < job_size; ++i) {
+        SearchByVector(qvecs[i], k, ef_search, results[i]);
+    }
+}
+
 void Hnsw::SearchById(int id, size_t k, size_t ef_search, vector<pair<int, float> >& result) {
     SearchById_(id, 0.0, (const float*)(model_level0_ + id * memory_per_node_level0_ + memory_per_link_level0_), k, ef_search, result);
+}
+
+void Hnsw::SearchByIds(vector<int> ids, size_t k, size_t ef_search,
+        vector<vector<pair<int, float>>>& results, int num_threads) {
+    int job_size = ids.size();
+#ifdef OPENMP
+    omp_set_num_threads(num_threads);
+#endif
+    results.resize(job_size);
+
+    #pragma omp parallel for schedule(dynamic, 4)
+    for (int i=0; i < job_size; ++i) {
+        SearchById(ids[i], k, ef_search, results[i]);
+    }
 }
 
 void Hnsw::SearchAtLayer(const std::vector<float>& qvec, HnswNode* enterpoint, int level, size_t ef, priority_queue<FurtherFirst>& result) {
