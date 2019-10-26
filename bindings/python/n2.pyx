@@ -224,7 +224,7 @@ class HnswIndex(object):
         else:
             return [k for k, _ in ret]
 
-    def search_by_vectors(self, vs, k, ef_search=-1, include_distances=False, num_threads=4):
+    def search_by_vectors(self, vs, k, ef_search=-1, include_distances=False, n_threads=4):
         """
         Multi-search by vectors with multi-threading
         :params vs: query vectors
@@ -236,13 +236,13 @@ class HnswIndex(object):
         """
         if ef_search == -1:
             ef_search = k * 10
-        rets = self.model.search_by_vectors(vs, k, ef_search, num_threads)
+        rets = self.model.search_by_vectors(vs, k, ef_search, n_threads)
         if include_distances:
             return rets
         else:
             return [[k for k, _ in ret] for ret in rets]
 
-    def search_by_ids(self, item_ids, k, ef_search=-1, include_distances=False, num_threads=4):
+    def search_by_ids(self, item_ids, k, ef_search=-1, include_distances=False, n_threads=4):
         """
         Multi-search by ids with multi-threading
         :params vs: query ids
@@ -254,7 +254,7 @@ class HnswIndex(object):
         """
         if ef_search == -1:
             ef_search = k * 10
-        rets = self.model.search_by_ids(item_ids, k, ef_search, num_threads)
+        rets = self.model.search_by_ids(item_ids, k, ef_search, n_threads)
         if include_distances:
             return rets
         else:
