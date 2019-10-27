@@ -632,8 +632,9 @@ void Hnsw::SearchById_(int cur_node_id, float cur_dist, const float* qraw, size_
     std::queue<QueueItem> q;
     search_list_->Reset();
 
-    unsigned int mark = search_list_->GetVisitMark();
-    unsigned int* visited = search_list_->GetVisited();
+    unsigned int mark = 1; // search_list_->GetVisitMark();
+    unsigned int* visited = new unsigned int[num_nodes_]; //search_list_->GetVisited();
+    memset(visited, 0, sizeof(unsigned int)*num_nodes_);
     bool need_sort = false;
     if (ensure_k_) {
         if (!result.empty()) need_sort = true;
@@ -705,6 +706,7 @@ void Hnsw::SearchById_(int cur_node_id, float cur_dist, const float* qraw, size_
         sort(result.begin(), result.end(), [](const pair<int, float>& i, const pair<int, float>& j) -> bool {
                 return i.second < j.second; });
     }
+    delete [] visited;
 }
 
 bool Hnsw::SetValuesFromModel(char* model) {
