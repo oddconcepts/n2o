@@ -632,6 +632,12 @@ void Hnsw::SearchById_(int cur_node_id, float cur_dist, const float* qraw, size_
     std::queue<QueueItem> q;
     search_list_->Reset();
 
+    // The unorthodox post-init early exit is to ensure that the state is empty.
+    // Realistically, the only call here that matters is Reset().
+    if (cur_node_id > num_nodes_) {
+        return;
+    }
+
     unsigned int mark = 1; // search_list_->GetVisitMark();
     unsigned int* visited = new unsigned int[num_nodes_]; //search_list_->GetVisited();
     memset(visited, 0, sizeof(unsigned int)*num_nodes_);
