@@ -54,6 +54,10 @@ public:
     unsigned int* visited_;
     unsigned int size_;
     unsigned int mark_;
+#ifdef OPENMP
+#pragma omp threadprivate(visited_)
+#pragma omp threadprivate(mark_)
+#endif
 };
 
 class Hnsw{
@@ -80,9 +84,13 @@ public:
 
     void SearchByVector(const std::vector<float>& qvec, size_t k, size_t ef_search,
                         std::vector<std::pair<int, float> >& result);
+    void SearchByVectors(const std::vector<std::vector<float>>& qvecs, size_t k, size_t ef_search,
+                 std::vector<std::vector<std::pair<int, float>>>& results, int num_threads);
 
     void SearchById(int id, size_t k, size_t ef_search,
                     std::vector<std::pair<int, float> >& result);
+    void SearchByIds(std::vector<int> ids, size_t k, size_t ef_search,
+                    std::vector<std::vector<std::pair<int, float>>>& results, int num_threads);
 
     void PrintDegreeDist() const;
     void PrintConfigs() const;

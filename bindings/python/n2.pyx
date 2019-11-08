@@ -33,6 +33,9 @@ cdef extern from "n2/hnsw.h" namespace "n2":
         void Fit() nogil except +
         void SearchByVector(const vector[float]& qvec, size_t, size_t, vector[pair[int, float]]& result) nogil except +
         void SearchById(int, size_t, size_t, vector[pair[int, float]]& result) nogil except +
+        void SearchByVectors(const vector[vector[float]]& qvecs, size_t, size_t,
+                            vector[vector[pair[int, float]]]& results, int) nogil except +
+        void SearchByIds(vector[int] , size_t, size_t, vector[vector[pair[int, float]]]& result, int) nogil except +
         void PrintDegreeDist() nogil except +
         void PrintConfigs() nogil except +
 
@@ -84,6 +87,16 @@ cdef class _HnswIndex:
             self.obj.SearchByVector(v, k, ef_search, ret)
         return ret
 
+    def search_by_vectors(self, _vs, _k, _ef_search, _num_threads):
+        cdef vector[vector[float]] vs = _vs
+        cdef size_t k = _k
+        cdef size_t ef_search = _ef_search
+        cdef vector[vector[pair[int, float]]] rets
+        cdef int num_threads = _num_threads
+        with nogil:
+            self.obj.SearchByVectors(vs, k, ef_search, rets, num_threads)
+        return rets
+
     def search_by_id(self, _item_id, _k, _ef_search):
         cdef int item_id = _item_id
         cdef size_t k = _k
@@ -92,6 +105,16 @@ cdef class _HnswIndex:
         with nogil:
             self.obj.SearchById(item_id, k, ef_search, ret)
         return ret
+
+    def search_by_ids(self, _item_ids, _k, _ef_search, _num_threads):
+        cdef vector[int] item_ids = _item_ids
+        cdef size_t k = _k
+        cdef size_t ef_search = _ef_search
+        cdef vector[vector[pair[int, float]]] rets
+        cdef int num_threads = _num_threads
+        with nogil:
+            self.obj.SearchByIds(item_ids, k, ef_search, rets, num_threads)
+        return rets
 
     def print_degree_dist(self):
         with nogil:
@@ -200,6 +223,42 @@ class HnswIndex(object):
             return ret
         else:
             return [k for k, _ in ret]
+
+    def search_by_vectors(self, vs, k, ef_search=-1, include_distances=False, n_threads=4):
+        """
+        Multi-search by vectors with multi-threading
+        :params vs: query vectors
+        :params k: k value
+        :param include_distances: If you set this argument to True,
+        it will return a list of list of tuples((item_id, distance)).
+        :param num_threads: number of threads that will be used for searching
+        :return ret: a list of list of k nearest items for each query in the same order.
+        """
+        if ef_search == -1:
+            ef_search = k * 10
+        rets = self.model.search_by_vectors(vs, k, ef_search, n_threads)
+        if include_distances:
+            return rets
+        else:
+            return [[k for k, _ in ret] for ret in rets]
+
+    def search_by_ids(self, item_ids, k, ef_search=-1, include_distances=False, n_threads=4):
+        """
+        Multi-search by ids with multi-threading
+        :params vs: query ids
+        :params k: k value
+        :param include_distances: If you set this argument to True,
+        it will return a list of list of tuples((item_id, distance)).
+        :param num_threads: number of threads that will be used for searching
+        :return ret: a list of list of k nearest items for each query in the same order.
+        """
+        if ef_search == -1:
+            ef_search = k * 10
+        rets = self.model.search_by_ids(item_ids, k, ef_search, n_threads)
+        if include_distances:
+            return rets
+        else:
+            return [[k for k, _ in ret] for ret in rets]
 
     def print_degree_dist(self):
         """
