@@ -36,11 +36,12 @@ def define_extensions(**kwargs):
     extra_link_args = []
     extra_compile_args = ['-std=c++11', '-O3', '-fPIC', '-march=native']
 
-    if platform.system() != 'Darwin': 
+    if platform.system() != 'Darwin':
         extra_link_args.append('-fopenmp')
         extra_compile_args.append('-fopenmp')
     else:
         extra_compile_args.append('-stdlib=libc++')
+        extra_link_args.append('-stdlib=libc++')
         if 'CXX' in os.environ.keys() and os.environ['CXX'].split('/')[-1] == 'icpc':
             extra_link_args.append('-fopenmp')
             extra_compile_args.append('-fopenmp')
