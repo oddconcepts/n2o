@@ -23,12 +23,12 @@
 #include <thread>
 #include <unordered_set>
 #include <vector>
-#include <xmmintrin.h>
 
 #include "n2/hnsw.h"
 #include "n2/hnsw_node.h"
 #include "n2/distance.h"
 #include "n2/min_heap.h"
+#include "n2/simd.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif /* _OPENMP */

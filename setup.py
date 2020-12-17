@@ -34,9 +34,10 @@ def define_extensions(**kwargs):
     from Cython.Build import cythonize
     libraries = []
     extra_link_args = []
-    extra_compile_args = ['-std=c++11', '-O3', '-fPIC', '-march=native']
+    extra_compile_args = ['-std=c++11', '-O3', '-fPIC']
 
     if platform.system() != 'Darwin':
+        extra_compile_args.append('-march=native')
         extra_link_args.append('-fopenmp')
         extra_compile_args.append('-fopenmp')
     else:

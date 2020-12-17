@@ -14,9 +14,9 @@
 
 #include <cmath>
 #include <functional>
-#include <xmmintrin.h>
 
 #include "n2/distance.h"
+#include "n2/simd.h"
 
 namespace n2 {
 
